@@ -38,13 +38,15 @@ le_result_t ioutil_writeToFile(const char* path,
                                void* value,
                                size_t size,
                                size_t count) {
-  LE_INFO("Attempting to write to %s", path);
+  LE_INFO("Attempting to write to %s (%d elements of size %d)", path, size,
+          count);
   FILE* f = fopen(path, "w");
   if (f == NULL) {
     LE_WARN("Failed to open %s for writing", path);
     return LE_IO_ERROR;
   }
   ssize_t nWritten = fwrite(value, size, count, f);
+  fflush(f);
   LE_INFO("Wrote %d bytes", nWritten);
   fclose(f);
   return LE_OK;
@@ -83,4 +85,87 @@ uint64_t GetCurrentTimestamp(void) {
   uint64_t utcMilliSec =
       (uint64_t)(tv.tv_sec) * 1000 + (uint64_t)(tv.tv_usec) / 1000;
   return utcMilliSec;
+}
+
+// TODO verify this is working
+le_result_t gpio_exportPin(char* pin) {
+  int len = strlen(pin);
+  LE_INFO("pin length str: %d", len);
+  return ioutil_writeToFile("/sys/class/gpio/export", &pin, sizeof(char), len);
+}
+
+le_result_t gpio_unexportPin(char* pin) {
+  int len = strlen(pin);
+  return ioutil_writeToFile("/sys/class/gpio/unexport", &pin, sizeof(char),
+                            len);
+}
+
+void getGpioPath(char* outputStr, char* pin, char* subDir) {
+  sprintf(outputStr, "/sys/class/gpio/gpio%s/%s", pin, subDir);
+}
+
+le_result_t gpio_setDirection(char* pin, char* direction) {
+  char path[100];
+  getGpioPath(path, pin, "direction");
+  return ioutil_writeToFile(path, direction, sizeof(char), strlen(direction));
+}
+
+le_result_t gpio_setPull(char* pin, char* pull) {
+  char path[100];
+  getGpioPath(path, pin, "pull");
+  return ioutil_writeToFile(path, pull, sizeof(char), strlen(pull));
+}
+
+le_result_t gpio_pullDown(char* pin) {
+  return gpio_setPull(pin, "down");
+}
+
+le_result_t gpio_pullUp(char* pin) {
+  return gpio_setPull(pin, "up");
+}
+
+le_result_t gpio_setInput(char* pin) {
+  return gpio_setDirection(pin, "in");
+}
+
+le_result_t gpio_setOutput(char* pin) {
+  return gpio_setDirection(pin, "out");
+}
+
+le_result_t gpio_setActiveState(char* pin, bool isActiveLow) {
+  // Any non zero value toggles the existing value
+  // so we must read the existing value first
+  char path[100];
+  int isActiveLowSet;
+  getGpioPath(path, pin, "active_low");
+  le_result_t readRes = ioutil_readIntFromFile(path, &isActiveLowSet);
+  le_result_t writeRes = LE_OK;
+  if (isActiveLow != isActiveLowSet) {
+    writeRes = ioutil_writeToFile(path, "1", sizeof(char), 1);
+  }
+  return readRes == LE_OK && writeRes == LE_OK ? LE_OK : LE_FAULT;
+}
+
+le_result_t gpio_isActive(char* pin, bool* isActive) {
+  char path[50];
+  getGpioPath(path, pin, "value");
+  int val;
+  le_result_t readRes = ioutil_readIntFromFile(path, &val);
+  *isActive = val;
+  return readRes;
+}
+
+le_result_t gpio_setValue(char* pin, bool state) {
+  char path[50];
+  getGpioPath(path, pin, "value");
+  char* strState = state ? "1" : "0";
+  return ioutil_writeToFile(path, &strState, sizeof(char), strlen(strState));
+}
+
+le_result_t gpio_setLow(char* pin) {
+  return gpio_setValue(pin, LOW);
+}
+
+le_result_t gpio_setHigh(char* pin) {
+  return gpio_setValue(pin, HIGH);
 }
