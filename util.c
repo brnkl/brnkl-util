@@ -77,6 +77,11 @@ time_t util_getMTime(char* path) {
     return st.st_mtime;
 }
 
+bool util_fileExists(const char* path) {
+  struct stat st;
+  return stat(path, &st) == 0;
+}
+
 uint64_t GetCurrentTimestamp(void) {
   struct timeval tv;
   gettimeofday(&tv, NULL);
