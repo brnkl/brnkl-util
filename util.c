@@ -79,6 +79,11 @@ time_t util_getMTime(char* path) {
     return st.st_mtime;
 }
 
+bool util_fileExists(const char* path) {
+  struct stat st;
+  return stat(path, &st) == 0;
+}
+
 uint64_t GetCurrentTimestamp(void) {
   struct timeval tv;
   gettimeofday(&tv, NULL);
@@ -86,7 +91,7 @@ uint64_t GetCurrentTimestamp(void) {
       (uint64_t)(tv.tv_sec) * 1000 + (uint64_t)(tv.tv_usec) / 1000;
   return utcMilliSec;
 }
-
+//
 // TODO verify this is working
 le_result_t gpio_exportPin(char* pin) {
   int len = strlen(pin);
