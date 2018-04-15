@@ -84,6 +84,17 @@ bool util_fileExists(const char* path) {
   return stat(path, &st) == 0;
 }
 
+bool util_alreadyMounted(const char* devPath) {
+  char content[2048];
+  FILE* f = fopen("/proc/mounts", "r");
+  if (f == NULL) {
+    return false;
+  }
+  fread(content, sizeof(char), sizeof(content), f);
+  // if this ref is non-null, we found a match
+  return strstr(content, devPath) != NULL;
+}
+
 uint64_t GetCurrentTimestamp(void) {
   struct timeval tv;
   gettimeofday(&tv, NULL);
