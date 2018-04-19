@@ -57,14 +57,14 @@ le_result_t ioutil_writeToFile(const char* path,
                                void* value,
                                size_t size,
                                size_t count) {
-  return writeToFile(path, value, size, count, "w")
+  return writeToFile(path, value, size, count, "w");
 }
 
 le_result_t ioutil_appendToFile(const char* path,
                                void* value,
                                size_t size,
                                size_t count) {
-  return writeToFile(path, value, size, count, "a")
+  return writeToFile(path, value, size, count, "a");
 }
 
 
