@@ -19,6 +19,11 @@ le_result_t ioutil_writeToFile(const char* path,
                                size_t size,
                                size_t count);
 
+le_result_t ioutil_appendToFile(const char* path,
+                               void* value,
+                               size_t size,
+                               size_t count);
+
 uint64_t GetCurrentTimestamp(void);
 time_t util_getMTime(char* path);
 int util_getUnixDatetime();

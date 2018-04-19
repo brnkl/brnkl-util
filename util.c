@@ -34,13 +34,14 @@ le_result_t ioutil_readDoubleFromFile(const char* path, double* value) {
   return readFromFile(path, value, scanDoubleCallback);
 }
 
-le_result_t ioutil_writeToFile(const char* path,
+le_result_t writeToFile(const char* path,
                                void* value,
                                size_t size,
-                               size_t count) {
+                               size_t count,
+                               const char* openMode) {
   LE_INFO("Attempting to write to %s (%d elements of size %d)", path, size,
           count);
-  FILE* f = fopen(path, "w");
+  FILE* f = fopen(path, openMode);
   if (f == NULL) {
     LE_WARN("Failed to open %s for writing", path);
     return LE_IO_ERROR;
@@ -51,6 +52,21 @@ le_result_t ioutil_writeToFile(const char* path,
   fclose(f);
   return LE_OK;
 }
+
+le_result_t ioutil_writeToFile(const char* path,
+                               void* value,
+                               size_t size,
+                               size_t count) {
+  return writeToFile(path, value, size, count, "w")
+}
+
+le_result_t ioutil_appendToFile(const char* path,
+                               void* value,
+                               size_t size,
+                               size_t count) {
+  return writeToFile(path, value, size, count, "a")
+}
+
 
 le_result_t util_flattenRes(le_result_t* res, int nRes) {
   for (int i = 0; i < nRes; i++) {
