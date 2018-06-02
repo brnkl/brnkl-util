@@ -70,9 +70,8 @@ le_result_t ioutil_appendToFile(const char* path,
 
 le_result_t util_flattenRes(le_result_t* res, int nRes) {
   for (int i = 0; i < nRes; i++) {
-    le_result_t* resPtr = res + i;
-    if (*resPtr != LE_OK)
-      return *resPtr;
+    if (res[i] != LE_OK)
+      return res[i];
   }
   return LE_OK;
 }
@@ -200,4 +199,38 @@ le_result_t gpio_setLow(char* pin) {
 
 le_result_t gpio_setHigh(char* pin) {
   return gpio_setValue(pin, HIGH);
+}
+
+void util_mapGeneric(Functional* f, bool shouldFilter) {
+  f->args.i = 0;
+  while (f->args.i < f->n) {
+    // if shouldFilter is false,
+    // we automatically consider it to be in
+    // the collection
+    bool inCollection = f->callback(&f->args) || !shouldFilter;
+    if (inCollection) {
+      f->args.i++;
+    } else {
+      (f->n)--;
+    }
+  }
+}
+
+void util_map(Functional* f) {
+  util_mapGeneric(f, false);
+}
+
+void util_filter(Functional* f) {
+  util_mapGeneric(f, true);
+}
+
+void* util_find(Functional* f) {
+  f->args.i = 0;
+  while (f->args.i < f->n) {
+    if(f->callback(&f->args)) {
+      return f->derefCallback(f->args.i, f->args.arr);
+    }
+    f->args.i++;
+  }
+  return NULL;
 }

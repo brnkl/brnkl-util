@@ -6,6 +6,20 @@
 #define HIGH 1
 #define LOW 0
 
+typedef struct {
+  int i;
+  void* arr;
+  void* ctxp;
+  void* storage;
+} FunctionalArgs;
+
+typedef struct {
+  int n; // number of elements in array
+  bool (*callback)(FunctionalArgs* args); // callback applied to arr[i]
+  void* (*derefCallback)(int i, void* j); // callback used to deference arr[i]
+  FunctionalArgs args;
+} Functional;
+
 // ioutil
 le_result_t readFromFile(const char* path,
                          void* value,
@@ -46,4 +60,7 @@ le_result_t gpio_setHigh(char* pin);
 le_result_t gpio_setPull(char* pin, char* pull);
 le_result_t gpio_pullDown(char* pin);
 le_result_t gpio_pullUp(char* pin);
+void* util_find(Functional* f);
+void util_map(Functional* f);
+void util_filter(Functional* f);
 #endif
