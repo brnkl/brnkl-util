@@ -233,3 +233,18 @@ void* util_find(Functional* f) {
   }
   return NULL;
 }
+
+le_result_t util_listDir(const char* dir, char* dest, size_t size) {
+  struct dirent *de;
+  char toConcat[1024];
+  DIR *dr = opendir(dir);
+  if(dr == NULL) return LE_NOT_FOUND;
+  while ((de = readdir(dr)) != NULL) {
+    if(de->d_name[0] != '.') {
+      snprintf(toConcat, size, "%s,", de->d_name);
+      strncat(dest, toConcat, size);
+    }
+  }
+  closedir(dr);
+  return LE_OK;
+}

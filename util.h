@@ -63,4 +63,5 @@ le_result_t gpio_pullUp(char* pin);
 void* util_find(Functional* f);
 void util_map(Functional* f);
 void util_filter(Functional* f);
+le_result_t util_listDir(const char* dir, char* dest, size_t size);
 #endif
