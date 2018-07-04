@@ -39,16 +39,13 @@ le_result_t writeToFile(const char* path,
                         size_t size,
                         size_t count,
                         const char* openMode) {
-  LE_INFO("Attempting to write to %s (%d elements of size %d)", path, size,
-          count);
   FILE* f = fopen(path, openMode);
   if (f == NULL) {
     LE_WARN("Failed to open %s for writing", path);
     return LE_IO_ERROR;
   }
-  ssize_t nWritten = fwrite(value, size, count, f);
+  fwrite(value, size, count, f);
   fflush(f);
-  LE_INFO("Wrote %d bytes", nWritten);
   fclose(f);
   return LE_OK;
 }
@@ -234,17 +231,17 @@ void* util_find(Functional* f) {
   return NULL;
 }
 
-le_result_t util_listDir(const char* dir, char* dest, size_t size) {
-  struct dirent *de;
+void util_listDir(const char* dir, char* dest, size_t size) {
+  struct dirent* de;
   char toConcat[1024];
-  DIR *dr = opendir(dir);
-  if(dr == NULL) return LE_NOT_FOUND;
+  DIR* dr = opendir(dir);
+  if (dr == NULL)
+    return;
   while ((de = readdir(dr)) != NULL) {
-    if(de->d_name[0] != '.') {
+    if (de->d_name[0] != '.') {
       snprintf(toConcat, size, "%s,", de->d_name);
       strncat(dest, toConcat, size);
     }
   }
   closedir(dr);
-  return LE_OK;
 }
