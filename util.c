@@ -35,10 +35,10 @@ le_result_t ioutil_readDoubleFromFile(const char* path, double* value) {
 }
 
 le_result_t writeToFile(const char* path,
-                               void* value,
-                               size_t size,
-                               size_t count,
-                               const char* openMode) {
+                        void* value,
+                        size_t size,
+                        size_t count,
+                        const char* openMode) {
   LE_INFO("Attempting to write to %s (%d elements of size %d)", path, size,
           count);
   FILE* f = fopen(path, openMode);
@@ -61,12 +61,11 @@ le_result_t ioutil_writeToFile(const char* path,
 }
 
 le_result_t ioutil_appendToFile(const char* path,
-                               void* value,
-                               size_t size,
-                               size_t count) {
+                                void* value,
+                                size_t size,
+                                size_t count) {
   return writeToFile(path, value, size, count, "a");
 }
-
 
 le_result_t util_flattenRes(le_result_t* res, int nRes) {
   for (int i = 0; i < nRes; i++) {
@@ -227,7 +226,7 @@ void util_filter(Functional* f) {
 void* util_find(Functional* f) {
   f->args.i = 0;
   while (f->args.i < f->n) {
-    if(f->callback(&f->args)) {
+    if (f->callback(&f->args)) {
       return f->derefCallback(f->args.i, f->args.arr);
     }
     f->args.i++;
