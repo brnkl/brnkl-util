@@ -114,11 +114,10 @@ uint64_t GetCurrentTimestamp(void) {
       (uint64_t)(tv.tv_sec) * 1000 + (uint64_t)(tv.tv_usec) / 1000;
   return utcMilliSec;
 }
-//
+
 // TODO verify this is working
 le_result_t gpio_exportPin(char* pin) {
   int len = strlen(pin);
-  LE_INFO("pin length str: %d", len);
   return ioutil_writeToFile("/sys/class/gpio/export", &pin, sizeof(char), len);
 }
 
