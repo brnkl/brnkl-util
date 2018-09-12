@@ -1,5 +1,6 @@
 #include "util.h"
 #include "legato.h"
+#include <termios.h>
 
 le_result_t readFromFile(const char* path,
                          void* value,
@@ -244,4 +245,128 @@ void util_listDir(const char* dir, char* dest, size_t size) {
     }
   }
   closedir(dr);
+}
+
+/**
+ * Convert an integer baud rate to a speed_t
+ */
+speed_t fd_convertBaud(int baud) {
+  speed_t b;
+  switch (baud) {
+    case 50:
+      b = B50;
+      break;
+    case 75:
+      b = B75;
+      break;
+    case 110:
+      b = B110;
+      break;
+    case 134:
+      b = B134;
+      break;
+    case 150:
+      b = B150;
+      break;
+    case 200:
+      b = B200;
+      break;
+    case 300:
+      b = B300;
+      break;
+    case 600:
+      b = B600;
+      break;
+    case 1200:
+      b = B1200;
+      break;
+    case 1800:
+      b = B1800;
+      break;
+    case 2400:
+      b = B2400;
+      break;
+    case 9600:
+      b = B9600;
+      break;
+    case 19200:
+      b = B19200;
+      break;
+    case 38400:
+      b = B38400;
+      break;
+    case 57600:
+      b = B57600;
+      break;
+    case 115200:
+      b = B115200;
+      break;
+    case 230400:
+      b = B230400;
+      break;
+    case 921600:
+      b = B921600;
+      break;
+    default:
+      b = -2;
+  }
+  return b;
+}
+
+/**
+ * Open a serial connection on device
+ *
+ * Lifted from here
+ * https://github.com/WiringPi/WiringPi/blob/master/wiringPi/wiringSerial.c
+ */
+int fd_openSerial(const char* device, int baud) {
+  struct termios options;
+  speed_t binaryBaud = fd_convertBaud(baud);
+  int status, fd;
+  if ((fd = open(device, O_RDWR | O_NOCTTY | O_NDELAY | O_NONBLOCK)) == -1)
+    return -1;
+  fcntl(fd, F_SETFL, O_RDWR);
+  tcgetattr(fd, &options);
+  cfmakeraw(&options);
+  cfsetispeed(&options, binaryBaud);
+  cfsetospeed(&options, binaryBaud);
+
+  options.c_cflag |= (CLOCAL | CREAD);
+  options.c_cflag &= ~PARENB;
+  options.c_cflag &= ~CSTOPB;
+  options.c_cflag &= ~CSIZE;
+  options.c_cflag |= CS8;
+  options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
+  options.c_oflag &= ~OPOST;
+
+  options.c_cc[VMIN] = 0;
+  options.c_cc[VTIME] = 10;  // Ten seconds (100 deciseconds)
+
+  tcsetattr(fd, TCSANOW | TCSAFLUSH, &options);
+
+  ioctl(fd, TIOCMGET, &status);
+
+  status |= TIOCM_DTR;
+  status |= TIOCM_RTS;
+
+  ioctl(fd, TIOCMSET, &status);
+  usleep(10000);  // 10mS
+  return fd;
+}
+
+void fd_puts(const int fd, const char* s) {
+  write(fd, s, strlen(s));
+}
+
+int fd_getChar(const int fd) {
+  uint8_t x;
+
+  if (read(fd, &x, 1) != 1)
+    return -1;
+
+  return ((int)x) & 0xFF;
+}
+
+void fd_flush(const int fd) {
+  tcflush(fd, TCIOFLUSH);
 }

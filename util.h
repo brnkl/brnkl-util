@@ -2,6 +2,7 @@
 #define UTIL_H
 
 #include "legato.h"
+#include <termios.h>
 
 #define HIGH 1
 #define LOW 0
@@ -64,4 +65,10 @@ void* util_find(Functional* f);
 void util_map(Functional* f);
 void util_filter(Functional* f);
 void util_listDir(const char* dir, char* dest, size_t size);
+
+int fd_openSerial(const char* device, int baud);
+speed_t fd_convertBaud(int baud);
+void fd_puts(const int fd, const char* s);
+int fd_getChar(const int fd);
+void fd_flush(const int fd);
 #endif
