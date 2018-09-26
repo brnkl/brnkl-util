@@ -330,8 +330,8 @@ int fd_openSerial(const char* device, int baud) {
   return fd;
 }
 
-void fd_puts(const int fd, const char* s) {
-  write(fd, s, strlen(s));
+int fd_puts(const int fd, const char* s) {
+  return write(fd, s, strlen(s));
 }
 
 int fd_getChar(const int fd) {
