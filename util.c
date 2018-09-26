@@ -344,5 +344,14 @@ int fd_getChar(const int fd) {
 }
 
 void fd_flush(const int fd) {
-  tcflush(fd, TCIOFLUSH);
+  // tcflush(fd, TCIOFLUSH);
+  tcdrain(fd);
+}
+
+void fd_flushInput(const int fd) {
+  tcflush(fd, TCIFLUSH);
+}
+
+int fd_dataAvail(int fd, int* data) {
+  return ioctl(fd, FIONREAD, data);
 }

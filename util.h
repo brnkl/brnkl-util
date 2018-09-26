@@ -67,7 +67,10 @@ void util_listDir(const char* dir, char* dest, size_t size);
 
 int fd_openSerial(const char* device, int baud);
 speed_t fd_convertBaud(int baud);
-void fd_puts(const int fd, const char* s);
+int fd_puts(const int fd, const char* s);
 int fd_getChar(const int fd);
 void fd_flush(const int fd);
+int fd_dataAvail(int fd, int* data);
+void fd_flushInput(const int fd);
+
 #endif
