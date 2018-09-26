@@ -11,7 +11,6 @@ typedef struct {
   int i;
   void* arr;
   void* ctxp;
-  void* storage;
 } FunctionalArgs;
 
 typedef struct {

@@ -197,29 +197,6 @@ le_result_t gpio_setHigh(char* pin) {
   return gpio_setValue(pin, HIGH);
 }
 
-void util_mapGeneric(Functional* f, bool shouldFilter) {
-  f->args.i = 0;
-  while (f->args.i < f->n) {
-    // if shouldFilter is false,
-    // we automatically consider it to be in
-    // the collection
-    bool inCollection = f->callback(&f->args) || !shouldFilter;
-    if (inCollection) {
-      f->args.i++;
-    } else {
-      (f->n)--;
-    }
-  }
-}
-
-void util_map(Functional* f) {
-  util_mapGeneric(f, false);
-}
-
-void util_filter(Functional* f) {
-  util_mapGeneric(f, true);
-}
-
 void* util_find(Functional* f) {
   f->args.i = 0;
   while (f->args.i < f->n) {
