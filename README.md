@@ -26,7 +26,6 @@ le_result_t ioutil_appendToFile(const char* path,
 Collection of unsorted helper functions
 
 ```c
-// TODO fix this name (no PascalCase)
 uint64_t GetCurrentTimestamp(void);
 time_t util_getMTime(char* path);
 int util_getUnixDatetime();
@@ -42,7 +41,6 @@ void util_listDir(const char* dir, char* dest, size_t size);
 Provides API calls for all functionality supported by the Linux SysFS GPIO interface
 
 ```c
-// TODO verify this is working
 le_result_t gpio_exportPin(char* pin);
 le_result_t gpio_unexportPin(char* pin);
 void getGpioPath(char* outputStr, char* pin, char* subDir);
