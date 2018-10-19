@@ -24,7 +24,6 @@ typedef struct {
 le_result_t readFromFile(const char* path,
                          void* value,
                          int (*scanCallback)(FILE* f, void* val));
-int scanIntCallback(FILE* f, void* value);
 int scanDoubleCallback(FILE* f, void* value);
 le_result_t ioutil_readIntFromFile(const char* path, int* value);
 le_result_t ioutil_readDoubleFromFile(const char* filePath, double* value);
@@ -38,6 +37,7 @@ le_result_t ioutil_appendToFile(const char* path,
                                 size_t size,
                                 size_t count);
 
+// TODO fix this name (no PascalCase)
 uint64_t GetCurrentTimestamp(void);
 time_t util_getMTime(char* path);
 int util_getUnixDatetime();
@@ -60,9 +60,9 @@ le_result_t gpio_setHigh(char* pin);
 le_result_t gpio_setPull(char* pin, char* pull);
 le_result_t gpio_pullDown(char* pin);
 le_result_t gpio_pullUp(char* pin);
+
 void* util_find(Functional* f);
-void util_map(Functional* f);
-void util_filter(Functional* f);
+
 void util_listDir(const char* dir, char* dest, size_t size);
 
 int fd_openSerial(const char* device, int baud);
