@@ -44,6 +44,7 @@ int util_getUnixDatetime();
 le_result_t util_flattenRes(le_result_t* res, int nRes);
 bool util_fileExists(const char* path);
 bool util_alreadyMounted(const char* devPath);
+double util_avgDouble(double* readings, int nReadings);
 
 // TODO verify this is working
 le_result_t gpio_exportPin(char* pin);

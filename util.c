@@ -355,3 +355,12 @@ void fd_flushInput(const int fd) {
 int fd_dataAvail(int fd, int* data) {
   return ioctl(fd, FIONREAD, data);
 }
+
+double util_avgDouble(double* readings, int nReadings) {
+  double sum = 0;
+  for (int i = 0; i < nReadings; i++) {
+    sum += readings[i];
+  }
+
+  return sum / nReadings;
+}
